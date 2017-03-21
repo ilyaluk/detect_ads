@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import cv2
-# import numpy as np
+import numpy as np
 import sys
 import time
 import _thread
@@ -35,11 +35,11 @@ stip = subprocess.Popen([
 	# ], env=env)
 	], stdout=subprocess.PIPE, env=env)
 
-# ffmpeg = subprocess.Popen(
-# 	['ffmpeg -i %s -r 5 -s 160x90 -vf format=gray -an -f mpegts - |\
-# 	  ffmpeg -y -f mpegts -i - -c copy %s -c copy %s' %
-# 		(sys.argv[1], py_fifo_name, stip_fifo_name)
-# 	], shell=True, stderr=open(os.devnull, 'w'))
+ffmpeg = subprocess.Popen(
+	['ffmpeg -i %s -r 5 -s 160x90 -vf format=gray -an -f mpegts - |\
+	  ffmpeg -y -f mpegts -i - -c copy %s -c copy %s' %
+		(sys.argv[1], py_fifo_name, stip_fifo_name)
+	], shell=True, stderr=open(os.devnull, 'w'))
 
 ffmpeg1 = subprocess.Popen(
 	['ffmpeg -y -i %s -r 5 -s 160x90 -vf format=gray -an -f mpegts %s' %
@@ -52,7 +52,11 @@ ffmpeg2 = subprocess.Popen(
 	], stderr=open(os.devnull, 'w'), shell=True)
 
 def process_stip():
+	points = np.empty((0, 162))
 	while 1:
+		print(stip.poll())
+		if finished:
+			break
 		# point-type y-norm x-norm t-norm y x t sigma2 tau2 dscr-hog(72) dscr-hof(90)
 		tmp = [b'#']
 		while tmp[0].startswith(b'#') or tmp == [b'']:
@@ -62,15 +66,20 @@ def process_stip():
 		x_norm = float(tmp[2])
 		y = int(tmp[4])
 		x = int(tmp[5])
-		t = int(tmp[6])
+		t = int(tmp[6]) # non-monotone
 		sigma2 = float(tmp[7])
 		tau2 = float(tmp[8])
 		hog = list(map(float, tmp[9:9+72]))
 		hof = list(map(float, tmp[9+72:9+72+90]))
+		points = np.append(points, [hog+hof], axis=0)
 		print('STIP', t)
-		# save this and break some time
-	# and apply k-means
-	# cv2.kmeans(data, K, criteria, attempts, flags)
+	print('Detected %d points' % points.shape[0])
+	K = 100
+	criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_MAX_ITER, 10, 0.0001)
+	attempts = 1
+	rv, labels, centers = cv2.kmeans(data, K, None, criteria, attempts, cv2.KMEANS_RANDOM_CENTERS)
+	if rv:
+		print(labels, centers)
 
 
 def process_ffmpeg():
@@ -95,7 +104,10 @@ def process_ffmpeg():
 		# if currentFrame % 1000 == 0:
 		# 	sys.stderr.write('Going at %.1f fps, done %df\n' % (1000 / (time.time() - tm), currentFrame))
 		# 	tm = time.time()
+	print('ffmpeg finished')
+	finished = True
 
+finished = False
 _thread.start_new_thread(process_stip, tuple())
 _thread.start_new_thread(process_ffmpeg, tuple())
 while 1:
