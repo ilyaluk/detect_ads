@@ -12,13 +12,13 @@ digraph G {
 	subgraph cluster_2 {
 		c0[label="python+sklearn+numpy\nk-means"];
 		label = "descriptor.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
 	}
 	subgraph cluster_3 {
-		d0[label="python+libav\n"];
-		d1[label="0002.mp4"];
-		d2[label="0000.mp4"];
-		d3[label="0001.mp4"];
+		d0[label="python+ffmpeg\n"];
+		d1[label="0002.ts"];
+		d2[label="0000.ts"];
+		d3[label="0001.ts"];
 		d0 -> d1;
 		d0 -> d2;
 		d0 -> d3;
@@ -27,6 +27,7 @@ digraph G {
 	subgraph cluster_4 {
 		e0[label="python+OpenCV\ndetect ads"];
 		label = "combinator.py";
+		bgcolor = "darkolivegreen1";
 	}
 	subgraph cluster_5 {
 		f0[label="python+OpenCV\ndetect scene cuts"];
