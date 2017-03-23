@@ -9,7 +9,7 @@ class FFMpeg(object):
             '-map', '[out2]', '-s', '160x90', '-f', 'mpegts', 'pipe:%d' % pipe_low,
             '-map', '[out3]', '-s', '160x90', '-r', '5', fifo,
             ],
-            stdin=None, stdout=None, stderr=None,
+            stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
             close_fds=False)
         # proc = subprocess.Popen(['ffmpeg', '-y', '-i', src,
         #     '-filter_complex',

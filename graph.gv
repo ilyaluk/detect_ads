@@ -1,8 +1,6 @@
 digraph G {
 	subgraph cluster_0 {
-		a0[label="ffmpeg\nhigh res"];
-		a1[label="ffmpeg\nlow res"];
-		a0 -> a1 [label="shell pipe"];
+		a0[label="ffmpeg"];
 		label = "ffmpeg.py";
 		bgcolor = "darkolivegreen1";
 	}
@@ -12,8 +10,9 @@ digraph G {
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_2 {
-		c0[label="python+OpenCV\nk-means"];
+		c0[label="python+sklearn+numpy\nk-means"];
 		label = "descriptor.py";
+		bgcolor = "darkolivegreen1";
 	}
 	subgraph cluster_3 {
 		d0[label="python+libav\n"];
@@ -35,10 +34,10 @@ digraph G {
 		bgcolor = "chartreuse";
 	}
 	stream_source -> a0;
-	a1 -> b0[label="fifo"];
+	a0 -> b0[label="fifo"];
 	b0 -> c0[label="points"];
-	a0 -> d0[label="py pipe"];
-	a1 -> d0[label="py pipe"];
+	a0 -> d0[label="py pipe\nlow res"];
+	a0 -> d0[label="py pipe\nhigh res"];
 	d1 -> e0;
 	d2 -> e0;
 	d3 -> e0;
