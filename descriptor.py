@@ -36,5 +36,5 @@ class Descriptor(object):
             labels = self.kmeans.predict(tmp)
             hist, _ = np.histogram(labels, 10, (-0.5, self.K - 0.5), density=True)
             # print(labels)
-            # print(hist)
+            print(hist)
             self.frame_cb(t, hist)

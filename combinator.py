@@ -3,16 +3,7 @@ import numpy as np
 import time
 
 class Combinator(object):
-    def __init__(self, input_fname):
-        # self.cap = cv2.VideoCapture(input_fname)
-
-        # width  = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        # height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        # fps    = int(self.cap.get(cv2.CAP_PROP_FPS))
-
-        # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        # self.writer = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
-
+    def __init__(self):
         self.window = 15 # frames
 
         self.cuts = set()
@@ -22,12 +13,6 @@ class Combinator(object):
         self.processed = -1
 
     def cut_callback(self, t, is_cut):
-        # print('cut_callback', t, is_cut)
-        # ret, frame = self.cap.read()
-        # if is_cut:
-        #     cv2.circle(frame, (0,0), 20, (255, 255, 255), 3)
-        # self.writer.write(frame)
-
         self.processed = t
         if is_cut:
             self.cuts.add(t)
