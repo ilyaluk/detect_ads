@@ -8,7 +8,7 @@ import tempfile
 import detector
 
 class Segmenter(object):
-    def __init__(self, cut_cb=None, save_path=None):
+    def __init__(self, cut_cb, save_path):
         self.pipe_r_hd, self.pipe_w_hd = os.pipe()
         os.set_inheritable(self.pipe_w_hd, True)
 
@@ -71,6 +71,7 @@ class Segmenter(object):
                 time.sleep(0.1)
 
             ret, frame_full_res = cap_hd.read()
+            cv2.putText(frame_full_res, str(chunk_id), (10,20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0,0,255))
 
             if i in self.cuts:
                 chunk_id += 1

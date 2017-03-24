@@ -10,8 +10,8 @@ digraph G {
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_2 {
-		c0[label="python+sklearn+numpy\nk-means+hist"];
-		label = "descriptor.py";
+		f0[label="python+OpenCV\ndetect scene cuts"];
+		label = "detector.py";
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_3 {
@@ -29,10 +29,11 @@ digraph G {
 		bgcolor = "darkolivegreen1";
 	}
 	subgraph cluster_5 {
-		f0[label="python+OpenCV\ndetect scene cuts"];
-		label = "detector.py";
+		c0[label="python+sklearn+numpy\nk-means+hist"];
+		label = "descriptor.py";
 		bgcolor = "chartreuse";
 	}
+
 	ss[label="Stream source"]
 	ss -> a0;
 	a0 -> b0[label="fifo"];
@@ -42,11 +43,11 @@ digraph G {
 	d3 -> e0;
 	d4 -> e0;
 	d5 -> e0;
-	c0 -> e0[label="frame descriptions"];
+	c0 -> e0[label="scenes descriptions"];
 	d0 -> f0[label="frames"];
 	f0 -> d0[label="cuts"];
 	a0 -> d2[label="audio",style="dotted"]
-	d0 -> e0[label="cuts",style="dotted"]
+	d0 -> c0[label="cuts",style="dotted"]
 	d3[label="0000.ts"];
 	d4[label="0001.ts"];
 	d5[label="0002.ts"];

@@ -23,14 +23,14 @@ if __name__ == '__main__':
     if args.wm:
         # TODO: do not segment if we're precalculating clusters
         comb = Combinator(args.c, args.o)
-        segm = Segmenter(cut_cb=comb.cut_callback, save_path=args.c)
-        desc = Descriptor(comb.frame_callback, wm=args.wm, rm=args.rm, kc=args.kc)
+        desc = Descriptor(comb.scene_callback, wm=args.wm, rm=args.rm, kc=args.kc)
+        segm = Segmenter(cut_cb=desc.cut_callback, save_path=args.c)
         stip = STIP(desc.callback)
         ffmpeg = FFMpeg(args.filename, segm.pipe_w_hd, segm.pipe_w_sd, stip.fifo)
     elif args.rm:
         comb = Combinator(args.c, args.o)
-        segm = Segmenter(cut_cb=comb.cut_callback, save_path=args.c)
-        desc = Descriptor(comb.frame_callback, wm=args.wm, rm=args.rm, kc=args.kc)
+        desc = Descriptor(comb.scene_callback, wm=args.wm, rm=args.rm, kc=args.kc)
+        segm = Segmenter(cut_cb=desc.cut_callback, save_path=args.c)
         stip = STIP(desc.callback)
         ffmpeg = FFMpeg(args.filename, segm.pipe_w_hd, segm.pipe_w_sd, stip.fifo)
     else:
