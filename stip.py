@@ -54,9 +54,9 @@ class STIP(object):
             # print('STIP', t)
 
             if t in debounce:
-                debounce[t] += (point_type, x, y, sigma2, tau2, hog, hof),
+                debounce[t] += (x, y, sigma2, tau2, hog, hof),
             elif len(debounce) == 0 or t > max(debounce):
-                debounce[t] = (point_type, x, y, sigma2, tau2, hog, hof),
+                debounce[t] = (x, y, sigma2, tau2, hog, hof),
 
             while len(debounce) > threshold:
                 tmp = min(debounce)

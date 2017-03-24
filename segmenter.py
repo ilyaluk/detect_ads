@@ -28,6 +28,7 @@ class Segmenter(object):
 
     def loop(self):
         cap_sd = cv2.VideoCapture('pipe:%d' % self.pipe_r_sd)
+        print('Opened SD')
 
         det = detector.ContentDetector()
         i = 0
@@ -46,10 +47,11 @@ class Segmenter(object):
 
     def loop_write(self):
         cap_hd = cv2.VideoCapture('pipe:%d' % self.pipe_r_hd)
+        print('Opened HD')
+
         width  = int(cap_hd.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap_hd.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps    = int(cap_hd.get(cv2.CAP_PROP_FPS))
-
 
         chunk_id = 0
         i = 0

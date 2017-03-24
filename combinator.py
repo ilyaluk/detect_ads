@@ -3,7 +3,14 @@ import numpy as np
 import time
 
 class Combinator(object):
-    def __init__(self):
+    def __init__(self, chunk_format, output_file):
+        self.chunk_format = chunk_format
+        self.output = open(output_file, 'wb')
+        # self.debug_file = open('debug.csv', 'w')
+
+        self.is_ads = False
+        self.chunk_id = 0
+
         self.window = 15 # frames
 
         self.cuts = set()
@@ -14,6 +21,7 @@ class Combinator(object):
 
     def cut_callback(self, t, is_cut):
         self.processed = t
+        print('comb cut', frame2time(t, 24))
         if is_cut:
             self.cuts.add(t)
 
@@ -21,34 +29,45 @@ class Combinator(object):
         while t + self.window + 1 > self.processed:
             time.sleep(0.1)
 
+        print('comb frame', frame2time(t, 24))
+
         self.cache[t] = descr
 
-        if min(self.cuts) <= t - self.window + 1:
+        while len(self.cuts) and min(self.cuts) <= t - self.window + 1:
             cur_cut = min(self.cuts)
-            print(frame2time(cur_cut, 24))
             self.cuts.remove(cur_cut)
 
-            tmp = np.array([])
+            start_desc = np.array([])
             for i in range(0, self.window):
                 if cur_cut + i in self.cache:
-                    tmp = np.hstack((tmp, self.cache[cur_cut + i]))
+                    start_desc = np.hstack((start_desc, self.cache[cur_cut + i]))
                 else:
-                    tmp = np.hstack((tmp, np.zeros(len(descr))))
-            self.start_descs[cur_cut] = tmp
-            print(tmp)
+                    start_desc = np.hstack((start_desc, np.zeros(len(descr))))
+            # self.start_descs[cur_cut] = start_desc
 
-            tmp = np.array([])
+            end_desc = np.array([])
             for i in range(-self.window, 0):
                 if cur_cut + i in self.cache:
-                    tmp = np.hstack((tmp, self.cache[cur_cut + i]))
+                    end_desc = np.hstack((end_desc, self.cache[cur_cut + i]))
                 else:
-                    tmp = np.hstack((tmp, np.zeros(len(descr))))
-            self.end_descs[cur_cut] = tmp
-            print(tmp)
+                    end_desc = np.hstack((end_desc, np.zeros(len(descr))))
+            # self.end_descs[cur_cut] = end_desc
 
+            if not self.is_ads and False: # some check if start_desc is start of ads
+                self.is_ads = True
+
+            if self.is_ads and False: # some check if end_desc is end of ads
+                self.is_ads = False
+
+            if not self.is_ads:
+                with open(self.chunk_format % self.chunk_id, 'rb') as chunk:
+                    self.output.write(chunk.read())
+
+            # self.debug_file.write('%d,s,%s\n' % (cur_cut, ','.join(str(i) for i in start_desc)))
+            # self.debug_file.write('%d,e,%s\n' % (cur_cut, ','.join(str(i) for i in end_desc)))
+
+            self.chunk_id += 1
             self.cache = {k:v for (k,v) in self.cache.items() if k >= cur_cut}
-
-        # print('frame_callback', t, descr)
 
 def frame2time(fr, fps):
     s = fr / fps

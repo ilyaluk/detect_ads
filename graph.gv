@@ -46,6 +46,7 @@ digraph G {
 	d0 -> f0[label="frames"];
 	f0 -> d0[label="cuts"];
 	a0 -> d2[label="audio",style="dotted"]
+	d0 -> e0[label="cuts",style="dotted"]
 	d3[label="0000.ts"];
 	d4[label="0001.ts"];
 	d5[label="0002.ts"];

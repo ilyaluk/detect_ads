@@ -23,7 +23,7 @@ class Descriptor(object):
                 if self.points is None:
                     self.points = np.array(pt[5] + pt[6])
                 else:
-                    self.points = np.vstack((self.points, np.array(pt[5] + pt[6])))
+                    self.points = np.vstack((self.points, np.array(pt[:4] + pt[4] + pt[5])))
                 self.processed += 1
                 if self.processed >= self.kc:
                     kmeans = KMeans(n_clusters=self.K).fit(self.points)
@@ -36,5 +36,5 @@ class Descriptor(object):
             labels = self.kmeans.predict(tmp)
             hist, _ = np.histogram(labels, 10, (-0.5, self.K - 0.5), density=True)
             # print(labels)
-            print(hist)
+            # print(hist)
             self.frame_cb(t, hist)
