@@ -18,13 +18,17 @@ class Descriptor(object):
             self.kmeans = pickle.load(open(rm, 'rb'))
 
     def callback(self, t, points):
+        print('Descr', t, len(points))
         if self.wm is not None:
+            # do not stack every point
             for pt in points:
                 if self.points is None:
-                    self.points = np.array(pt[5] + pt[6])
+                    self.points = np.array(pt)
                 else:
-                    self.points = np.vstack((self.points, np.array(pt[:4] + pt[4] + pt[5])))
+                    self.points = np.vstack((self.points, np.array(pt)))
                 self.processed += 1
+                if self.processed % 10 == 0:
+                    print("Precalc: about %.2f%% done" % (100 * self.processed / self.kc))
                 if self.processed >= self.kc:
                     kmeans = KMeans(n_clusters=self.K).fit(self.points)
                     pickle.dump(kmeans, open(self.wm, 'wb'))
@@ -32,8 +36,7 @@ class Descriptor(object):
                     print('Now try to run with -rm %s!' % self.wm)
                     sys.exit(0)
         if self.kmeans is not None:
-            tmp = [pt[5] + pt[6] for pt in points]
-            labels = self.kmeans.predict(tmp)
+            labels = self.kmeans.predict(points)
             hist, _ = np.histogram(labels, 10, (-0.5, self.K - 0.5), density=True)
             # print(labels)
             # print(hist)

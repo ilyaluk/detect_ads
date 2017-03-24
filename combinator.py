@@ -6,7 +6,7 @@ class Combinator(object):
     def __init__(self, chunk_format, output_file):
         self.chunk_format = chunk_format
         self.output = open(output_file, 'wb')
-        # self.debug_file = open('debug.csv', 'w')
+        self.debug_file = open('debug.csv', 'w')
 
         self.is_ads = False
         self.chunk_id = 0
@@ -21,7 +21,7 @@ class Combinator(object):
 
     def cut_callback(self, t, is_cut):
         self.processed = t
-        print('comb cut', frame2time(t, 24))
+        # print('comb cut', frame2time(t, 24))
         if is_cut:
             self.cuts.add(t)
 
@@ -29,7 +29,7 @@ class Combinator(object):
         while t + self.window + 1 > self.processed:
             time.sleep(0.1)
 
-        print('comb frame', frame2time(t, 24))
+        # print('comb frame', frame2time(t, 24))
 
         self.cache[t] = descr
 
@@ -63,8 +63,8 @@ class Combinator(object):
                 with open(self.chunk_format % self.chunk_id, 'rb') as chunk:
                     self.output.write(chunk.read())
 
-            # self.debug_file.write('%d,s,%s\n' % (cur_cut, ','.join(str(i) for i in start_desc)))
-            # self.debug_file.write('%d,e,%s\n' % (cur_cut, ','.join(str(i) for i in end_desc)))
+            self.debug_file.write('%d,s,%s\n' % (cur_cut, ','.join(str(i) for i in start_desc)))
+            self.debug_file.write('%d,e,%s\n' % (cur_cut, ','.join(str(i) for i in end_desc)))
 
             self.chunk_id += 1
             self.cache = {k:v for (k,v) in self.cache.items() if k >= cur_cut}

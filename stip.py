@@ -1,4 +1,5 @@
 import threading
+import time
 import os
 import subprocess
 
@@ -24,7 +25,7 @@ class STIP(object):
 
         self.proc = subprocess.Popen([
           './stip-2.0-linux/bin/stipdet', '-i', stip_list, '-ext', '.' + stip_fifo.split('.')[-1],
-          '-vpath', './', '-stdout', 'yes', '-o', '/dev/null', '-vis', 'no'
+          '-vpath', './', '-stdout', 'yes', '-o', '/dev/null', '-vis', 'no'#, '-thresh', '0.000015',
           ], stdout=subprocess.PIPE, env=env)
 
 
@@ -48,15 +49,15 @@ class STIP(object):
             t = int(tmp[6])
             sigma2 = float(tmp[7])
             tau2 = float(tmp[8])
-            hog = list(map(float, tmp[9:9+72]))
-            hof = list(map(float, tmp[9+72:9+72+90]))
+            hog = tuple(map(float, tmp[9:9+72]))
+            hof = tuple(map(float, tmp[9+72:9+72+90]))
 
             # print('STIP', t)
 
             if t in debounce:
-                debounce[t] += (x, y, sigma2, tau2, hog, hof),
+                debounce[t] += ((x, y) + hog + hof),
             elif len(debounce) == 0 or t > max(debounce):
-                debounce[t] = (x, y, sigma2, tau2, hog, hof),
+                debounce[t] = ((x, y) + hog + hof),
 
             while len(debounce) > threshold:
                 tmp = min(debounce)
