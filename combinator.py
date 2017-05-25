@@ -3,8 +3,8 @@ import numpy as np
 import time
 
 class Combinator(object):
-    def __init__(self, chunk_format, output_file):
-        self.chunk_format = chunk_format
+    def __init__(self, rec_file, output_file):
+        self.rec_file = rec_file
         self.output = open(output_file, 'wb')
 
         self.debug_file = open('debug.csv', 'w')
@@ -32,16 +32,19 @@ class Combinator(object):
         print('Comb', t, descr)
 
         if not self.is_ads and self.is_ad_start(descr):
+            # TODO: framerate
             print('Ads start', frame2time(t, 24))
             self.is_ads = True
 
         if self.is_ads and self.is_ad_end(descr):
+            # TODO: framerate
             print('Ads end', frame2time(t, 24))
             self.is_ads = False
 
         if not self.is_ads:
-            with open(self.chunk_format % self.chunk_id, 'rb') as chunk:
-                self.output.write(chunk.read())
+            print('123')
+            # with open(self.rec_file % self.chunk_id, 'rb') as chunk:
+            #     self.output.write(chunk.read())
 
         self.debug_file.write('%d,%s\n' % (t, ','.join(str(i) for i in descr)))
 

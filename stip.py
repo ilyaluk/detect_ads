@@ -25,7 +25,7 @@ class STIP(object):
 
         self.proc = subprocess.Popen([
           './stip-2.0-linux/bin/stipdet', '-i', stip_list, '-ext', '.' + stip_fifo.split('.')[-1],
-          '-vpath', './', '-stdout', 'yes', '-o', '/dev/null', '-vis', 'no'#, '-thresh', '0.000015',
+          '-vpath', './', '-stdout', 'yes', '-o', '/dev/null', '-vis', 'no', '-thresh', '0.0000005',
           ], stdout=subprocess.PIPE, env=env)
 
 

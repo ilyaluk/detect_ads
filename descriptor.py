@@ -32,15 +32,21 @@ class Descriptor(object):
 
         print('Descr', t, len(points))
 
-        if self.kmeans is not None and t in self.cuts:
-            self.cuts.remove(t)
-            labels = self.kmeans.predict(self.points)
-            hist, _ = np.histogram(labels, self.K, (-0.5, self.K - 0.5), density=True)
-            self.points = None
-            # print(labels)
-            # print(hist)
-            self.scene_cb(t, hist)
+        if self.kmeans is not None:
+            for i in range(20):
+                if t - i in self.cuts:
+                    self.cuts.remove(t - i)
+                    labels = self.kmeans.predict(self.points)
+                    hist, _ = np.histogram(labels, self.K, (-0.5, self.K - 0.5), density=True)
+                    self.points = None
+                    # print(labels)
+                    # print(hist)
+                    self.scene_cb(t - i, hist)
 
+        # for i in range(-4, 5):
+        #     if t + i in self.cuts:
+        #         break
+        # else:
         if self.points is None:
             self.points = np.array(points)
         else:

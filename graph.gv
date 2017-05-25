@@ -2,7 +2,7 @@ digraph G {
 	subgraph cluster_0 {
 		a0[label="ffmpeg"];
 		label = "ffmpeg.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
 	}
 	subgraph cluster_1 {
 		b0[label="stip"];
@@ -16,12 +16,8 @@ digraph G {
 	}
 	subgraph cluster_3 {
 		d0[label="python+OpenCV\n"];
-		d1[label="python+OpenCV\n"];
-		d2[label="ffmpeg\n"];
-		d0 -> d1[label="cuts"];
-		d1 -> d2[label="raw frames"];
 		label = "segmenter.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
 	}
 	subgraph cluster_4 {
 		e0[label="python+OpenCV\ndetect ads"];
@@ -39,21 +35,13 @@ digraph G {
 	a0 -> b0[label="fifo"];
 	b0 -> c0[label="points"];
 	a0 -> d0[label="py pipe\nlow res"];
-	a0 -> d1[label="py pipe\nhigh res"];
+	a0 -> d3[label="high res"];
 	d3 -> e0;
-	d4 -> e0;
-	d5 -> e0;
 	c0 -> e0[label="scenes descriptions"];
 	d0 -> f0[label="frames"];
 	f0 -> d0[label="cuts"];
-	a0 -> d2[label="audio",style="dotted"]
-	d0 -> c0[label="cuts",style="dotted"]
-	d3[label="0000.ts"];
-	d4[label="0001.ts"];
-	d5[label="0002.ts"];
-	d2 -> d3;
-	d2 -> d4;
-	d2 -> d5;
+	d0 -> c0[label="cuts"]
+	d3[label="recording.mp4"];
 	fv[label="Final video"];
 	e0 -> fv;
 }
