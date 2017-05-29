@@ -20,7 +20,7 @@ digraph G {
 		bgcolor = "darkolivegreen1";
 	}
 	subgraph cluster_5 {
-		c0[label="python+sklearn+numpy\nk-means+hist"];
+		c0[label="python+numpy"];
 		label = "descriptor.py";
 		bgcolor = "darkolivegreen1";
 	}
@@ -28,13 +28,13 @@ digraph G {
 	ss[label="Stream source"]
 	ss -> a0;
 	a0 -> b0[label="py pipe\nlow res"];
-	a0 -> d3[label="high res"];
+	a0 -> d3[label="original quality"];
 	d3 -> e0;
 	c0 -> e0[label="scenes descriptions"];
 	b0 -> f0[label="frames"];
 	f0 -> b0[label="cuts"];
 	b0 -> c0[label="cuts\npoints"]
-	d3[label="recording.mp4"];
+	d3[label="recordings/1.m3u8"];
 	fv[label="Final video"];
 	e0 -> fv;
 }
