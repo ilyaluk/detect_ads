@@ -82,6 +82,6 @@ class ContentDetector():
 
             #self.last_frame.release()
             del self.last_frame
-                
+
         self.last_frame = frame_img.copy()
         return cut_detected

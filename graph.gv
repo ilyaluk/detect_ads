@@ -5,18 +5,13 @@ digraph G {
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_1 {
-		b0[label="stip"];
-		label = "stip.py";
-		bgcolor = "chartreuse";
+		b0[label="python+OpenCV"];
+		label = "process.py";
+		bgcolor = "darkolivegreen1";
 	}
 	subgraph cluster_2 {
 		f0[label="python+OpenCV\ndetect scene cuts"];
-		label = "detector.py";
-		bgcolor = "chartreuse";
-	}
-	subgraph cluster_3 {
-		d0[label="python+OpenCV\n"];
-		label = "segmenter.py";
+		label = "cut_detector.py";
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_4 {
@@ -27,20 +22,18 @@ digraph G {
 	subgraph cluster_5 {
 		c0[label="python+sklearn+numpy\nk-means+hist"];
 		label = "descriptor.py";
-		bgcolor = "chartreuse";
+		bgcolor = "darkolivegreen1";
 	}
 
 	ss[label="Stream source"]
 	ss -> a0;
-	a0 -> b0[label="fifo"];
-	b0 -> c0[label="points"];
-	a0 -> d0[label="py pipe\nlow res"];
+	a0 -> b0[label="py pipe\nlow res"];
 	a0 -> d3[label="high res"];
 	d3 -> e0;
 	c0 -> e0[label="scenes descriptions"];
-	d0 -> f0[label="frames"];
-	f0 -> d0[label="cuts"];
-	d0 -> c0[label="cuts"]
+	b0 -> f0[label="frames"];
+	f0 -> b0[label="cuts"];
+	b0 -> c0[label="cuts\npoints"]
 	d3[label="recording.mp4"];
 	fv[label="Final video"];
 	e0 -> fv;

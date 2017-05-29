@@ -2,12 +2,10 @@ import cv2
 import threading
 import time
 import os
-import subprocess
-import tempfile
 
-import detector
+import cut_detector
 
-class Segmenter(object):
+class Process(object):
     def __init__(self, desc_cb):
         self.pipe_r_sd, self.pipe_w_sd = os.pipe()
         os.set_inheritable(self.pipe_w_sd, True)
@@ -16,23 +14,23 @@ class Segmenter(object):
 
         self.processed = -1
 
-        detect = threading.Thread(target=self.detect_loop)
-        detect.start()
+        process = threading.Thread(target=self.process_loop)
+        process.start()
 
-    def detect_loop(self):
+    def process_loop(self):
         cap_sd = cv2.VideoCapture('pipe:%d' % self.pipe_r_sd)
         print('Opened SD')
 
-        # TODO: move this loop to detector
-        det = detector.ContentDetector()
+        det = cut_detector.ContentDetector()
         i = 0
         scene = 0
+
         while cap_sd.isOpened():
             ret, frame = cap_sd.read()
             is_cut = det.process_frame(i, frame)
 
             # call to descriptor callback
-            self.desc_cb(i, is_cut)
+            self.desc_cb(i, [], is_cut)
 
             if is_cut:
                 print('Cut at', i)

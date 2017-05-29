@@ -9,7 +9,7 @@ class Descriptor(object):
         self.wm = None
         self.K = 10
         self.cuts = set()
-        self.processed = -1
+        self.processed = 0
         self.points = None
 
         if wm is not None:
@@ -19,34 +19,22 @@ class Descriptor(object):
         if rm is not None:
             self.kmeans = pickle.load(open(rm, 'rb'))
 
-    def cut_callback(self, t, is_cut):
-        self.processed = t
+    def scene_callback(self, t, points, is_cut):
+        print('Descr', t, len(points))
 
         if is_cut:
             print('Descriptor cut', t)
             self.cuts.add(t)
 
-    def callback(self, t, points):
-        while t > self.processed:
-            time.sleep(0.1)
-
-        print('Descr', t, len(points))
-
         if self.kmeans is not None:
-            for i in range(20):
-                if t - i in self.cuts:
-                    self.cuts.remove(t - i)
-                    labels = self.kmeans.predict(self.points)
-                    hist, _ = np.histogram(labels, self.K, (-0.5, self.K - 0.5), density=True)
-                    self.points = None
-                    # print(labels)
-                    # print(hist)
-                    self.scene_cb(t - i, hist)
+            self.cuts.remove(t - i)
+            labels = self.kmeans.predict(self.points)
+            hist, _ = np.histogram(labels, self.K, (-0.5, self.K - 0.5), density=True)
+            self.points = None
+            # print(labels)
+            # print(hist)
+            self.scene_cb(t - i, hist)
 
-        # for i in range(-4, 5):
-        #     if t + i in self.cuts:
-        #         break
-        # else:
         if self.points is None:
             self.points = np.array(points)
         else:
