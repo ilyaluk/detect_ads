@@ -6,7 +6,9 @@ import os
 import cut_detector
 
 class Process(object):
-    def __init__(self, desc_cb):
+    def __init__(self, desc_cb, ws):
+        self.ws = ws
+
         self.pipe_r_sd, self.pipe_w_sd = os.pipe()
         os.set_inheritable(self.pipe_w_sd, True)
 
@@ -19,6 +21,8 @@ class Process(object):
 
     def process_loop(self):
         cap_sd = cv2.VideoCapture('pipe:%d' % self.pipe_r_sd)
+        fps = cap_sd.get(cv2.CAP_PROP_FPS)
+
         print('pr: opened video')
 
         det = cut_detector.ContentDetector()
@@ -47,10 +51,24 @@ class Process(object):
 
             if is_cut:
                 print('pr: cut at', i)
-                cv2.imwrite('frame%04d_%d.png' % (scene, i), frame)
+                preview = 'frame%04d_%d.png' % (scene, i)
+                cv2.imwrite(preview, frame)
+                self.ws.sendJSON({
+                    'scene': scene,
+                    'time': frame2time(i, fps),
+                    'preview': preview
+                })
                 scene += 1
             self.processed = i
 
             i += 1
 
         cap_sd.release()
+
+
+def frame2time(fr, fps):
+    s = fr / fps
+    h = s // (60 * 60)
+    m = (s // 60) % 60
+    s = s % 60
+    return "%d:%.2d:%06.3f" % (h, m, s)

@@ -1,10 +1,12 @@
 import numpy as np
 
 class Descriptor(object):
-    def __init__(self, scene_cb):
+    def __init__(self, scene_cb, ws):
         self.scene_cb = scene_cb
         self.processed = 0
         self.points = None
+
+        self.ws = ws
 
     def frame_callback(self, t, points, is_cut):
         if points is None:

@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 class Combinator(object):
-    def __init__(self, rec_file, output_file):
+    def __init__(self, rec_file, output_file, ws):
         self.rec_file = rec_file
         self.output = open(output_file, 'wb')
 
@@ -15,6 +15,8 @@ class Combinator(object):
         self.start_descs = dict()
         self.end_descs = dict()
         self.processed = -1
+
+        self.ws = ws
 
     def is_ad_start(self, desc):
         # I'm really sorry. I haven't slept for more than 30 hours, that's best I can do
