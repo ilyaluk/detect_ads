@@ -10,32 +10,64 @@
      function init() {
        ws = new WebSocket('ws://localhost:8000/')
        ws.onopen = function(evt) {
+         $('body').show()
        }
        ws.onclose = function(evt) {
        }
        ws.onmessage = onMessage
        ws.onerror = function(evt) {
          console.log(evt)
-         ws.close()
+         setTimeout(function() {
+           location.reload()
+         }, 3000)
        }
      }
 
      function start() {
        $('#inp').hide()
-       $('#out').hide()
        $('#start').hide()
+       $('#out').show()
+       $('#save').show()
        sendJSON({'action': 'start',
-                 'input': $('#inp').val(),
+                 'input': $('#inp').val()
+       })
+     }
+
+     function save() {
+       $('#out').hide()
+       $('#save').hide()
+       sendJSON({'action': 'save',
                  'output': $('#out').val()
        })
+     }
+
+     function markScene(id, mark) {
+       sendJSON({'action': 'markScene',
+                 'id': id,
+                 'mark': mark
+       })
+       return false
      }
 
      function onMessage(evt) {
        var d = JSON.parse(evt.data);
        if ('log' in d) {
-         console.log(d.log)
+         alert(d.log)
        } else if ('scene' in d) {
-         $('#scenes').prepend('<tr><td>' + d.scene + '</td><td>' + d.time + '</td><td><img src="' + d.preview + '"></td></tr>')
+         var id = d.scene
+         $('#scenes').prepend(
+           '<tr id="scene' + id + '"><td>' + id + '</td>' +
+           '<td>' + d.time + '</td>' +
+           '<td><img src="' + d.preview + '"></td>' +
+           '<td>' +
+             '<a onclick="markScene(' + id + ', \'adStart\')" href="#">Ad start</a><br>' +
+             '<a onclick="markScene(' + id + ', \'adEnd\')" href="#">Ad end</a><br>' +
+             '<a onclick="markScene(' + id + ', \'unmark\')" href="#">Unmark</a>' +
+           '</td>' +
+           '<td class="status"></td>' +
+           '</tr>')
+       } else if ('update' in d) {
+         $('#scene' + d.update + ' > .status').html(d.text)
        }
      }
 
@@ -45,10 +77,11 @@
     </script>
   </head>
 
-  <body onload="init()">
+  <body onload="init()" style="display: none">
     <input id="inp" placeholder="Input" value="../spz240.mp4">
-    <input id="out" placeholder="Output" value="out.mp4">
     <input type="button" id="start" onclick="start()" value="Start!">
+    <input id="out" placeholder="Output" value="out.mp4" style="display: none">
+    <input type="button" id="save" onclick="save()" value="Save!" style="display: none">
     <table id="scenes" border="1">
     </table>
   </body>

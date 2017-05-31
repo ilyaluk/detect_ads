@@ -7,7 +7,7 @@ digraph G {
 	subgraph cluster_1 {
 		b0[label="python+OpenCV"];
 		label = "process.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
 	}
 	subgraph cluster_2 {
 		f0[label="python+OpenCV\ndetect scene cuts"];
@@ -15,14 +15,19 @@ digraph G {
 		bgcolor = "chartreuse";
 	}
 	subgraph cluster_4 {
-		e0[label="python+OpenCV\ndetect ads"];
+		e0[label="python+numpy\ndetect ads"];
 		label = "combinator.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
 	}
 	subgraph cluster_5 {
 		c0[label="python+numpy"];
 		label = "descriptor.py";
-		bgcolor = "darkolivegreen1";
+		bgcolor = "chartreuse";
+	}
+	subgraph cluster_6 {
+		g0[label="Web browser+WebSockets"];
+		label = "panel.html";
+		bgcolor = "chartreuse";
 	}
 
 	ss[label="Stream source"]
@@ -34,6 +39,8 @@ digraph G {
 	b0 -> f0[label="frames"];
 	f0 -> b0[label="cuts"];
 	b0 -> c0[label="cuts\npoints"]
+	g0 -> e0[label="Manual ad training"];
+  b0 -> g0[label="Scene previews"];
 	d3[label="recordings/1.m3u8"];
 	fv[label="Final video"];
 	e0 -> fv;

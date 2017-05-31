@@ -26,21 +26,30 @@ class WSServer(WebSocket):
             print(data)
             if 'action' in data:
                 if data['action'] == 'start':
-                    self.startCut(data['input'], data['output'])
+                    self.startCut(data['input'])
+                elif data['action'] == 'save':
+                    self.saveRip(data['output'])
+                elif data['action'] == 'markScene':
+                    self.comb.markScene(data['id'], data['mark'])
         except Exception as e:
             self.log(traceback.format_exc())
 
-    def startCut(self, input, output):
+    def startCut(self, input):
         rec_name = 'recordings/1.m3u8' # TODO: timestamps
 
-        comb = Combinator(rec_name, output, self)
-        self.log('main: created Combinator')
-        desc = Descriptor(comb.scene_callback, self)
-        self.log('main: created Descriptor')
-        proc = Process(desc.frame_callback, self)
-        self.log('main: created Process')
-        ffmpeg = FFMpeg(input, rec_name, proc.pipe_w_sd, self)
-        self.log('main: created FFMpeg')
+        self.comb = Combinator(rec_name, self)
+        print('main: created Combinator')
+        self.desc = Descriptor(self.comb.scene_callback)
+        print('main: created Descriptor')
+        self.proc = Process(self.desc.frame_callback, self)
+        print('main: created Process')
+        self.ffmpeg = FFMpeg(input, rec_name, self.proc.pipe_w_sd)
+        print('main: created FFMpeg')
+
+    def saveRip(self, output):
+        self.ffmpeg.kill()
+        self.proc.do_stop = True
+        self.comb.saveRip(output)
 
     def handleConnected(self):
         print(self.address, 'connected')
@@ -51,4 +60,5 @@ class WSServer(WebSocket):
 
 if __name__ == '__main__':
     server = SimpleWebSocketServer('127.0.0.1', 8000, WSServer)
+    print('Nice! Now go to file://%s/panel.html' % os.path.dirname(os.path.realpath(__file__)))
     server.serveforever()

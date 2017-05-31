@@ -15,6 +15,7 @@ class Process(object):
         self.desc_cb = desc_cb
 
         self.processed = -1
+        self.do_stop = False
 
         process = threading.Thread(target=self.process_loop)
         process.start()
@@ -22,6 +23,7 @@ class Process(object):
     def process_loop(self):
         cap_sd = cv2.VideoCapture('pipe:%d' % self.pipe_r_sd)
         fps = cap_sd.get(cv2.CAP_PROP_FPS)
+        fps = 24
 
         print('pr: opened video')
 
@@ -32,8 +34,11 @@ class Process(object):
         scene = 0
 
         while cap_sd.isOpened():
+            if self.do_stop:
+                break
+
             ret, frame = cap_sd.read()
-            print('pr: read frame', i)
+            # print('pr: read frame', i)
 
             is_cut = det.process_frame(i, frame)
 
@@ -46,11 +51,9 @@ class Process(object):
             # cv2.waitKey(0)
             # 1/0
 
-            # call to descriptor callback
-            self.desc_cb(i, des, is_cut)
-
             if is_cut:
                 print('pr: cut at', i)
+                # TODO: non-conflicting folders & names
                 preview = 'frame%04d_%d.png' % (scene, i)
                 cv2.imwrite(preview, frame)
                 self.ws.sendJSON({
@@ -59,12 +62,15 @@ class Process(object):
                     'preview': preview
                 })
                 scene += 1
+
+            # call to descriptor callback
+            self.desc_cb(i, des, is_cut)
+
             self.processed = i
 
             i += 1
 
         cap_sd.release()
-
 
 def frame2time(fr, fps):
     s = fr / fps

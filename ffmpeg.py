@@ -3,8 +3,11 @@ import time
 import os
 
 class FFMpeg(object):
-    def __init__(self, src, file_high, pipe_low, ws):
-        copy = subprocess.Popen(['ffmpeg', '-y', '-i', src,
+    def __init__(self, src, file_high, pipe_low):
+        if os.path.isfile(file_high):
+            os.remove(file_high)
+
+        self.copy = subprocess.Popen(['ffmpeg', '-y', '-i', src,
                                  '-c', 'copy', '-hls_list_size', '0', file_high],
                                 stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
                                 close_fds=False)
@@ -18,3 +21,6 @@ class FFMpeg(object):
                                 close_fds=False)
 
         print('ffmpeg: started \'em')
+
+    def kill(self):
+        self.copy.terminate()
