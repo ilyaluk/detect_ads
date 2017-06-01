@@ -38,10 +38,11 @@
 sudo apt update
 sudo apt upgrade
 sudo apt install git python3-pip ffmpeg
-git clone https://bitbucket.org/ilyaluk/detect_ads
-pip3 install -r requirements.txt
 # Optional if you have OpenCV for python3 installed
 sh -c "$(https://raw.githubusercontent.com/milq/milq/master/scripts/bash/install-opencv.sh -O -)"
+git clone https://bitbucket.org/ilyaluk/detect_ads
+cd detect_ads
+pip3 install -r requirements.txt
 # On your local machine, if you're running it on remote server
 sudo apt install sshfs
 sshfs your-server:detect_ads some_folder

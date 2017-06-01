@@ -76,10 +76,12 @@ class Combinator(object):
 
     def markScene(self, id, mark):
         if mark == 'adStart':
-            self.ignored.remove(id)
+            if id in self.ignored:
+                self.ignored.remove(id)
             self.start_descs[id] = self.descs[id] if id < len(self.descs) else None
         elif mark == 'adEnd':
-            self.ignored.remove(id)
+            if id in self.ignored:
+                self.ignored.remove(id)
             self.end_descs[id] = self.descs[id] if id < len(self.descs) else None
         elif mark == 'unmark':
             self.ignored.add(id)
