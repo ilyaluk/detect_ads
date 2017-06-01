@@ -18,12 +18,18 @@ class WSServer(WebSocket):
         self.sendMessage(json.dumps(m))
 
     def log(self, *m):
-        self.sendMessage(json.dumps({'log': ' '.join(str(i) for i in m)}))
+        text = ' '.join(str(i) for i in m)
+        print(text)
+        self.sendMessage(json.dumps({'log': text}))
+
+    def error(self, *m):
+        text = ' '.join(str(i) for i in m)
+        print(text)
+        self.sendMessage(json.dumps({'error': text}))
 
     def handleMessage(self):
         try:
             data = json.loads(self.data)
-            print(data)
             if 'action' in data:
                 if data['action'] == 'start':
                     self.startCut(data['input'])
@@ -32,19 +38,19 @@ class WSServer(WebSocket):
                 elif data['action'] == 'markScene':
                     self.comb.markScene(data['id'], data['mark'])
         except Exception as e:
-            self.log(traceback.format_exc())
+            self.error(traceback.format_exc())
 
     def startCut(self, input):
         rec_name = 'recordings/1.m3u8' # TODO: timestamps
 
         self.comb = Combinator(rec_name, self)
-        print('main: created Combinator')
+        self.log('main: created Combinator')
         self.desc = Descriptor(self.comb.scene_callback)
-        print('main: created Descriptor')
+        self.log('main: created Descriptor')
         self.proc = Process(self.desc.frame_callback, self)
-        print('main: created Process')
+        self.log('main: created Process')
         self.ffmpeg = FFMpeg(input, rec_name, self.proc.pipe_w_sd)
-        print('main: created FFMpeg')
+        self.log('main: created FFMpeg')
 
     def saveRip(self, output):
         self.ffmpeg.kill()
@@ -52,11 +58,11 @@ class WSServer(WebSocket):
         self.comb.saveRip(output)
 
     def handleConnected(self):
-        print(self.address, 'connected')
+        self.log(self.address, 'connected')
 
     def handleClose(self):
         # TODO: resume
-        print(self.address, 'closed')
+        self.log(self.address, 'closed')
 
 if __name__ == '__main__':
     server = SimpleWebSocketServer('127.0.0.1', 8000, WSServer)

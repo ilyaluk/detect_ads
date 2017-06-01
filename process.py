@@ -25,7 +25,7 @@ class Process(object):
         fps = cap_sd.get(cv2.CAP_PROP_FPS)
         fps = 24
 
-        print('pr: opened video')
+        self.ws.log('pr: opened video')
 
         det = cut_detector.ContentDetector()
         orb = cv2.ORB_create()
@@ -38,7 +38,7 @@ class Process(object):
                 break
 
             ret, frame = cap_sd.read()
-            # print('pr: read frame', i)
+            # self.ws.log('pr: read frame', i)
 
             is_cut = det.process_frame(i, frame)
 
@@ -52,7 +52,7 @@ class Process(object):
             # 1/0
 
             if is_cut:
-                print('pr: cut at', i)
+                self.ws.log('pr: cut at', i)
                 # TODO: non-conflicting folders & names
                 preview = 'frame%04d_%d.png' % (scene, i)
                 cv2.imwrite(preview, frame)

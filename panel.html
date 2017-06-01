@@ -52,7 +52,9 @@
      function onMessage(evt) {
        var d = JSON.parse(evt.data);
        if ('log' in d) {
-         alert(d.log)
+         $('#log').html(d.log + '\n' + $('#log').html())
+       } else if ('error' in d) {
+         alert(d.error)
        } else if ('scene' in d) {
          var id = d.scene
          $('#scenes').prepend(
@@ -82,6 +84,7 @@
     <input type="button" id="start" onclick="start()" value="Start!">
     <input id="out" placeholder="Output" value="out.mp4" style="display: none">
     <input type="button" id="save" onclick="save()" value="Save!" style="display: none">
+    <div id="log" style="white-space: pre; background-color: #000; color: #0f0; font-family: monospace; height: 150px; overflow-y: scroll;"></div>
     <table id="scenes" border="1">
     </table>
   </body>

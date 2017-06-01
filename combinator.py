@@ -22,7 +22,7 @@ class Combinator(object):
         self.ws = ws
 
     def scene_callback(self, t, descr):
-        print('Comb', t, descr)
+        self.ws.log('Comb', t, descr)
 
         id = len(self.descs)
         if id in self.start_descs and self.start_descs[id] == None:
@@ -97,7 +97,7 @@ class Combinator(object):
                 self.updateScene(i)
 
     def saveRip(self, output):
-        print('Saving rip to', output)
+        self.ws.log('Saving rip to', output)
         isAds = True
         currentStart = ''
         fragid = 0
@@ -115,28 +115,28 @@ class Combinator(object):
                     isAds = True
                     # TODO: solve problems
                     end = frame2time(self.scene_timecodes[i] - 5, 24)
-                    print('Fragment: %s-%s' % (currentStart, end))
-                    print('Transcoding...')
+                    self.ws.log('Fragment: %s-%s' % (currentStart, end))
+                    self.ws.log('Transcoding...')
                     subprocess.call(['ffmpeg', "-y", "-threads", "0", "-live_start_index", "0",
                                      "-i", self.rec_file, "-ss", currentStart, "-to", end,
                                      "-bsf:a", "aac_adtstoasc", "-strict", "-2", "cut%d.mp4" % fragid],
                                     stdout=open('/dev/null', 'w'), stderr=open('/dev/null', 'w'))
                     fragid += 1
                 else:
-                    print('Found fragment: %s-' % currentStart)
-                    print('Transcoding...')
+                    self.ws.log('Found fragment: %s-' % currentStart)
+                    self.ws.log('Transcoding...')
                     subprocess.call(['ffmpeg', "-y", "-threads", "0", "-live_start_index", "0",
                                      "-i", self.rec_file, "-ss", currentStart,
                                      "-bsf:a", "aac_adtstoasc", "-strict", "-2", "cut%d.mp4" % fragid],
                                     stdout=open('/dev/null', 'w'), stderr=open('/dev/null', 'w'))
                     fragid += 1
 
-        print('Merging...')
+        self.ws.log('Merging...')
         open('concat.txt', 'w').write('\n'.join("file 'cut%d.mp4'" % i for i in range(fragid)))
         subprocess.call(['ffmpeg', "-y", "-threads", "0", "-f", "concat", "-i", "concat.txt",
                          "-c:v", "copy", '-c:a', 'copy', "-strict", "-2", output],
                         stdout=open('/dev/null', 'w'), stderr=open('/dev/null', 'w'))
-        print('Done!')
+        self.ws.log('Done!')
 
 def compareDescs(d1, d2):
     prob1 = np.corrcoef(d1, d2)[0][1]
