@@ -2,6 +2,8 @@ recordings/**
 frame*.png
 concat.txt
 *.mp4
+debug*
+.#*
 
 # Thanks to GitHub for Python.gitignore
 

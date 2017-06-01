@@ -12,8 +12,8 @@ class Combinator(object):
         self.is_ads = False
         self.chunk_id = 0
 
-        self.start_descs = {67: None, 68: None}
-        self.end_descs = {170: None}
+        self.start_descs = {}
+        self.end_descs = {}
         self.ignored = set()
         self.descs = []
         self.scene_timecodes = []
