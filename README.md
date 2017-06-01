@@ -5,13 +5,15 @@
 ### Актуальность задачи ###
 
 * Существуют различные решения для поиска и удаления рекламных вставок из видеопотока, у всех есть свои преимущества и недостатки.
-* Хотелось бы реализовать работающую с хорошей точностью утилиту для поиска рекламы, сохраняющее очищенный видеопоток "на лету".
+* Хотелось бы реализовать работающую с хорошей точностью утилиту для поиска рекламы.
+
+### [Демо](https://ilyaluk.ru/detect_ads_demo.mp4) ###
 
 ### Используемые технологии ###
 
-* Python — язык, с которым я себя комфортно чувствую, к тому же являющийся более или менее стандартом (вместе с C++) в анализе видео и изображений.
-* OpenCV — одна из лучших библиотек компьютерного зрения.
-* ffmpeg — пожалуй, лучшая утилита для обработки видео.
+* Python — язык, с которым я себя комфортно чувствую, к тому же являющийся более или менее стандартом (вместе с C++) в анализе видео и изображений
+* OpenCV — одна из лучших библиотек компьютерного зрения
+* ffmpeg — пожалуй, лучшая утилита для обработки видео
 * numpy — хорошая библиотека для анализа данных для Python
 * WebSockets — для визуализации работы в реальном времени в браузере
 
@@ -38,11 +40,14 @@
 sudo apt update
 sudo apt upgrade
 sudo apt install git python3-pip ffmpeg
-# Optional if you have OpenCV for python3 installed
-sh -c "$(https://raw.githubusercontent.com/milq/milq/master/scripts/bash/install-opencv.sh -O -)"
+
 git clone https://bitbucket.org/ilyaluk/detect_ads
 cd detect_ads
 pip3 install -r requirements.txt
+
+# Optional if you have OpenCV for python3 installed
+sh -c "$(https://raw.githubusercontent.com/milq/milq/master/scripts/bash/install-opencv.sh -O -)"
+
 # On your local machine, if you're running it on remote server
 sudo apt install sshfs
 sshfs your-server:detect_ads some_folder

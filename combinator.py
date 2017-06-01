@@ -123,7 +123,7 @@ class Combinator(object):
                                     stdout=open('/dev/null', 'w'), stderr=open('/dev/null', 'w'))
                     fragid += 1
                 else:
-                    self.ws.log('Found fragment: %s-' % currentStart)
+                    self.ws.log('Fragment: %s-' % currentStart)
                     self.ws.log('Transcoding...')
                     subprocess.call(['ffmpeg', "-y", "-threads", "0", "-live_start_index", "0",
                                      "-i", self.rec_file, "-ss", currentStart,

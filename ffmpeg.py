@@ -7,6 +7,7 @@ class FFMpeg(object):
         if os.path.isfile(file_high):
             os.remove(file_high)
 
+        # TODO: check output
         self.copy = subprocess.Popen(['ffmpeg', '-y', '-i', src,
                                       '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-hls_list_size', '0', file_high],
                                      stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
@@ -15,6 +16,7 @@ class FFMpeg(object):
         while not os.path.isfile(file_high):
             time.sleep(1)
 
+        # TODO: check output
         comp = subprocess.Popen(['ffmpeg', '-y', '-live_start_index', '0', '-i', file_high,
                                  '-s', '320x180', '-f', 'mpegts', 'pipe:%d' % pipe_low],
                                 stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
