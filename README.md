@@ -32,9 +32,18 @@
 
 ### Как запустить ###
 
-* Требуется OpenCV 3 (любой подойдёт, главное чтоб были биндинги для Python)
-* Требуется ffmpeg
-* Требуется numpy
-* Бла-бла-бла
+Инструкция проверена для Ubuntu 16.04
 
-Когда более или менее закончу добавлять зависимости, разверну на чистой виртуалке с Ubuntu 16.04 и напишу подробную инструкцию для неё.
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install git python3-pip ffmpeg
+git clone https://bitbucket.org/ilyaluk/detect_ads
+pip3 install -r requirements.txt
+# Optional if you have OpenCV for python3 installed
+sh -c "$(https://raw.githubusercontent.com/milq/milq/master/scripts/bash/install-opencv.sh -O -)"
+# On your local machine, if you're running it on remote server
+sudo apt install sshfs
+sshfs your-server:detect_ads some_folder
+ssh -L 8000:127.1:8000 your-serer
+```

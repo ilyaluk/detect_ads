@@ -14,6 +14,7 @@ class Combinator(object):
 
         self.start_descs = {67: None, 68: None}
         self.end_descs = {170: None}
+        self.ignored = set()
         self.descs = []
         self.scene_timecodes = []
         self.scene_status = {}
@@ -37,23 +38,24 @@ class Combinator(object):
 
     def updateScene(self, id):
         tmp = ''
-        for i in list(self.start_descs):
-            if i <= id and self.start_descs[i] is not None:
-                corr, sim = compareDescs(self.descs[id], self.start_descs[i])
-                if corr > 0.9 and sim < 0.02:
-                    self.scene_status[id] = 'adstart'
-                    tmp += 'ADSTART<br>'
-                    self.start_descs[id] = self.descs[id]
-                tmp += '<a href="#scene%d">%d</a> %f %f<br>' % (i, i, corr, sim)
+        if id not in self.ignored:
+            for i in list(self.start_descs):
+                if i <= id and self.start_descs[i] is not None:
+                    corr, sim = compareDescs(self.descs[id], self.start_descs[i])
+                    if corr > 0.9 and sim < 0.02:
+                        self.scene_status[id] = 'adstart'
+                        tmp += 'ADSTART<br>'
+                        self.start_descs[id] = self.descs[id]
+                    tmp += '<a href="#scene%d">%d</a> %f %f<br>' % (i, i, corr, sim)
 
-        for i in list(self.end_descs):
-            if i <= id and self.end_descs[i] is not None:
-                corr, sim = compareDescs(self.descs[id], self.end_descs[i])
-                if corr > 0.9 and sim < 0.02:
-                    self.scene_status[id] = 'adend'
-                    tmp += 'ADEND<br>'
-                    self.end_descs[id] = self.descs[id]
-                tmp += '<a href="#scene%d">%d</a> %f %f<br>' % (i, i, corr, sim)
+            for i in list(self.end_descs):
+                if i <= id and self.end_descs[i] is not None:
+                    corr, sim = compareDescs(self.descs[id], self.end_descs[i])
+                    if corr > 0.9 and sim < 0.02:
+                        self.scene_status[id] = 'adend'
+                        tmp += 'ADEND<br>'
+                        self.end_descs[id] = self.descs[id]
+                    tmp += '<a href="#scene%d">%d</a> %f %f<br>' % (i, i, corr, sim)
 
         if id not in self.scene_status:
             for i in range(id - 1, -1, -1):
@@ -74,10 +76,13 @@ class Combinator(object):
 
     def markScene(self, id, mark):
         if mark == 'adStart':
+            self.ignored.remove(id)
             self.start_descs[id] = self.descs[id] if id < len(self.descs) else None
         elif mark == 'adEnd':
+            self.ignored.remove(id)
             self.end_descs[id] = self.descs[id] if id < len(self.descs) else None
         elif mark == 'unmark':
+            self.ignored.add(id)
             if id in self.start_descs:
                 del self.start_descs[id]
             if id in self.end_descs:

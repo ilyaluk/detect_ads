@@ -8,9 +8,9 @@ class FFMpeg(object):
             os.remove(file_high)
 
         self.copy = subprocess.Popen(['ffmpeg', '-y', '-i', src,
-                                 '-c', 'copy', '-hls_list_size', '0', file_high],
-                                stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
-                                close_fds=False)
+                                      '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', '-hls_list_size', '0', file_high],
+                                     stdin=None, stdout=None, stderr=open('/dev/null', 'wb'),
+                                     close_fds=False)
 
         while not os.path.isfile(file_high):
             time.sleep(1)
