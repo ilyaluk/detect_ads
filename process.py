@@ -53,8 +53,7 @@ class Process(object):
 
             if is_cut:
                 self.ws.log('pr: cut at', i)
-                # TODO: non-conflicting folders & names
-                preview = 'frame%04d_%d.png' % (scene, i)
+                preview = 'previews/frame%04d_%d.png' % (scene, i)
                 cv2.imwrite(preview, frame)
                 self.ws.sendJSON({
                     'scene': scene,

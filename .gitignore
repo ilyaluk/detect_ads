@@ -1,4 +1,5 @@
 recordings/**
+previews/**
 frame*.png
 concat.txt
 *.mp4
